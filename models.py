@@ -1,23 +1,26 @@
 from peewee import *
 import datetime
-# from flask_login import UserMixin
+from flask_login import UserMixin
 
 DATABASE = PostgresqlDatabase('crewyou')
 
-class Users(Model):
-    username = CharField()
-    email = CharField()
+class Users(UserMixin, Model):
+    username = CharField(unique=True)
+    email = CharField(unique=True)
     password = CharField()
 
     class Meta:
         database = DATABASE
 
 class Profiles(Model):
-    # user_id = ForeignKeyField(Users, backref='dogs')
+    # user_id = ForeignKeyField(Users, backref='profiles')
     firstName= CharField()
     lastName= CharField()
     airport= CharField()
-    positions= CharField()
+    position1= CharField()
+    position2= CharField()
+    position3= CharField()
+    position4= CharField()
     touring= BooleanField()
     
     class Meta:

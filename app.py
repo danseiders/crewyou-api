@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, g
 from flask_cors import CORS
-# from flask_login import LoginManager
+from flask_login import LoginManager
 
 import models
 from resources.users import user
@@ -11,8 +11,9 @@ PORT = 8000
 
 app = Flask(__name__)
 
-# app.secret_key = 'thisisasecretasdlfjkas'
-# login_manager = LoginManager()
+login_manager = LoginManager()
+app.secret_key = 'thisisasecretasdlfjkas'
+login_manager.init_app(app)
 
 @app.before_request
 def before_request():
