@@ -4,7 +4,7 @@ import datetime
 
 DATABASE = PostgresqlDatabase('crewyou')
 
-class Dog(Model):
+class Users(Model):
     username = CharField()
     email = CharField()
     password = CharField()
@@ -12,8 +12,19 @@ class Dog(Model):
     class Meta:
         database = DATABASE
 
+class Profiles(Model):
+    # user_id = ForeignKeyField(Users, backref='dogs')
+    firstName= CharField()
+    lastName= CharField()
+    airport= CharField()
+    positions= CharField()
+    touring= BooleanField()
+    
+    class Meta:
+        database = DATABASE
+
 def initialize():
     DATABASE.connect()
-    DATABASE.create_tables([Dog], safe=True)
+    DATABASE.create_tables([Users, Profiles], safe=True)
     print('TABLES Created')
     DATABASE.close()
