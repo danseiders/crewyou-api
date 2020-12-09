@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, g
+from flask_cors import CORS
 # from flask_login import LoginManager
 
 import models
-# from resources.users import users
+from resources.users import user
+from resources.user_profiles import profile
 
 DEBUG = True
 PORT = 8000
@@ -21,6 +23,12 @@ def before_request():
 def after_request(response):
     g.db.close()
     return response
+
+CORS(profile, origins=['*'], supports_credentials=True)
+CORS(user, origins=['*'], supports_credentials=True)
+
+app.register_blueprint(profile, url_prefix='/profile')
+app.register_blueprint(user, url_prefix='/users')
 
 @app.route('/')
 def index():
