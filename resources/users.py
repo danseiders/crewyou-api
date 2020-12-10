@@ -22,3 +22,29 @@ def create_user():
         print(type(user_dict))
         del user_dict['password']
         return jsonify(data=user_dict, status={'code': 201, 'message': 'Success'})
+
+@user.route('/login', methods=['POST'])
+def login():
+    payload= request.get_json()
+    payload['email'] = [payload['email'].lower()]
+    print('payload', payload)
+    try:
+        user = models.Users.get(models.Users.username == payload['username'])
+        user_dict = model_to_dict(user)
+        if(check_password_hash(user_dict['password'], payload['password'])):
+            del user_dict['password']
+            login_user(user)
+            print(user, 'this is user')
+            return jsonify(data=user_dict, status={'code': 200, 'message': 'Success'})
+        else:
+            print('Username or Password is in correct')
+            return jsonify(data={}, status={'code': 401, 'message': 'Username or Password is incorrect'
+            })
+    except models.DoesNotExist:
+        print('User does not exist')
+        return jsonify(data={}, status={'code': 401, 'message': 'Username or Password is incorrect'})
+        
+@user.route('/logout', methods=['GET'])
+def logout():
+    logout_user()
+    return jsonify(data={}, status={'code': 200, 'message': 'Successful logout'})

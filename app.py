@@ -1,10 +1,14 @@
 from flask import Flask, jsonify, g
 from flask_cors import CORS
 from flask_login import LoginManager
+from dotenv import load_dotenv
+import os
 
 import models
 from resources.users import user
 from resources.user_profiles import profile
+
+load_dotenv()
 
 DEBUG = True
 PORT = 8000
@@ -12,8 +16,16 @@ PORT = 8000
 app = Flask(__name__)
 
 login_manager = LoginManager()
-app.secret_key = 'thisisasecretasdlfjkas'
+app.secret_key =  'kEEpItlIkEasEcrEt'
+# app.secret_key =  os.getenv('SECRET_KEY')
 login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(userid):
+    try:
+        return models.Users.get(models.Users.id == userid)
+    except models.DoesNotExist:
+        return None
 
 @app.before_request
 def before_request():

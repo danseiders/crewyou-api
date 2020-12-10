@@ -1,7 +1,11 @@
+appdirs==1.4.4
 astroid==2.4.2
 bcrypt==3.2.0
+certifi==2020.12.5
 cffi==1.14.4
 click==7.1.2
+distlib==0.3.1
+filelock==3.0.12
 Flask==1.1.2
 Flask-Bcrypt==0.7.1
 Flask-Cors==3.0.9
@@ -16,7 +20,10 @@ peewee==3.14.0
 psycopg2==2.8.6
 pycparser==2.20
 pylint==2.6.0
+python-dotenv==0.15.0
 six==1.15.0
 toml==0.10.2
+virtualenv==20.2.2
+virtualenv-clone==0.5.4
 Werkzeug==1.0.1
 wrapt==1.12.1
