@@ -7,6 +7,7 @@ import os
 import models
 from resources.users import user
 from resources.user_profiles import profile
+from resources.manager_user_profiles import manager_profile
 
 load_dotenv()
 
@@ -42,6 +43,7 @@ CORS(user, origins=['*'], supports_credentials=True)
 
 app.register_blueprint(profile, url_prefix='/profile')
 app.register_blueprint(user, url_prefix='/users')
+app.register_blueprint(manager_profile, url_prefix='/managers')
 
 @app.route('/')
 def index():

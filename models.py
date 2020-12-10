@@ -5,10 +5,10 @@ from flask_login import UserMixin
 DATABASE = PostgresqlDatabase('crewyou')
 
 class Users(UserMixin, Model):
-    id = CharField()
     username = CharField(unique=True)
     email = CharField(unique=True)
     password = CharField()
+    crew = BooleanField()
 
     class Meta:
         database = DATABASE
@@ -27,8 +27,17 @@ class Profiles(Model):
     class Meta:
         database = DATABASE
 
+class ManagerProfiles(Model):
+    user_id = ForeignKeyField(Users, backref='manager-profiles')
+    company = CharField()
+    city = CharField()
+    artists = CharField()
+
+    class Meta: 
+        database = DATABASE
+
 def initialize():
     DATABASE.connect()
-    DATABASE.create_tables([Users, Profiles], safe=True)
+    DATABASE.create_tables([Users, Profiles, ManagerProfiles], safe=True)
     print('TABLES Created')
     DATABASE.close()
