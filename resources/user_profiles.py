@@ -6,6 +6,7 @@ from flask_login import current_user, login_required
 profile = Blueprint('user_profiles', 'user_profile')
 
 @profile.route('/', methods=['GET'])
+@login_required
 def get_all_profiles():
     try:
         profiles = [model_to_dict(profile) for profile in current_user.profiles]
@@ -17,6 +18,7 @@ def get_all_profiles():
 @profile.route('/new', methods=['POST'])
 def create_profile():
     payload = request.get_json()
+    payload['user_id'] = current_user.id
     print(type(payload), 'payload')
     user_profile = models.Profiles.create(**payload)
     print(user_profile.__dict__)
