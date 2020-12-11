@@ -15,16 +15,19 @@ DEBUG = True
 PORT = 8000
 
 app = Flask(__name__)
+# app.config.update(
+#     SESSION_COOKIE_SECURE=True,
+#     SESSION_COOKIE_SAMESITE='None'
+# )
 
 login_manager = LoginManager()
-app.secret_key =  'kEEpItlIkEasEcrEt'
-# app.secret_key =  os.getenv('SECRET_KEY')
+app.secret_key =  os.getenv('SECRET_KEY')
 login_manager.init_app(app)
 
 @login_manager.user_loader
-def load_user(userid):
+def load_user(user_id):
     try:
-        return models.Users.get(models.Users.id == userid)
+        return models.Users.get(models.Users.id == user_id)
     except models.DoesNotExist:
         return None
 

@@ -17,12 +17,14 @@ def get_all_profiles():
 
 @profile.route('/new', methods=['POST'])
 def create_profile():
+    print(request)
     payload = request.get_json()
+    print(payload)
     payload['user_id'] = current_user.id
-    print(type(payload), 'payload')
+    # print(type(payload), 'payload')
     user_profile = models.Profiles.create(**payload)
-    print(user_profile.__dict__)
-    print(dir(user_profile))
-    print(model_to_dict(user_profile), 'model to dict')
+    # print(user_profile.__dict__)
+    # print(dir(user_profile))
+    # print(model_to_dict(user_profile), 'model to dict')
     user_profile_dict = model_to_dict(user_profile)
     return jsonify(data=user_profile_dict, status={'code': 201, 'message': 'Sucess'})
