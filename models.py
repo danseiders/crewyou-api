@@ -5,6 +5,7 @@ from flask_login import UserMixin
 DATABASE = PostgresqlDatabase('crewyou')
 
 class Users(UserMixin, Model):
+    id = CharField(unique=True)
     username = CharField(unique=True)
     email = CharField(unique=True)
     password = CharField()
@@ -18,11 +19,13 @@ class Profiles(Model):
     firstName= CharField()
     lastName= CharField()
     airport= CharField()
+    about= TextField()
     position1= CharField()
     position2= CharField()
     position3= CharField()
     position4= CharField()
     touring= BooleanField()
+    availability= CharField()
     
     class Meta:
         database = DATABASE
