@@ -26,6 +26,8 @@ class Profiles(Model):
     position4= CharField()
     touring= BooleanField()
     availability= CharField()
+    # friends = ForeignKeyField(Users, backref='profiles')
+    
     
     class Meta:
         database = DATABASE
