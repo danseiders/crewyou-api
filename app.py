@@ -14,18 +14,20 @@ load_dotenv()
 
 DEBUG = True
 PORT = 8000
+# REDIS_URL = os.environ['REDIS_URL']
+# REDIS_CHAN = 'chat'
 
 app = Flask(__name__)
 
-# app.config.update(
-#     SESSION_COOKIE_SECURE=True,
-#     SESSION_COOKIE_SAMESITE='None'
-# )
+app.config.update(
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SAMESITE='None'
+)
 
 login_manager = LoginManager()
 app.secret_key =  os.getenv('SECRET_KEY')
 login_manager.init_app(app)
-# socketio = SocketIO(app, cors_allowed_origins='*')
+socketio = SocketIO(app, cors_allowed_origins='*')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -44,14 +46,15 @@ def after_request(response):
     g.db.close()
     return response
 
-# @socketio.on('message')
-# def handleMessage(msg):
-#     print(msg)
-#     send(msg, broadcast=True)
-#     return None
+@socketio.on('message')
+def handleMessage(msg):
+    print(msg)
+    send(msg, broadcast=True)
+    return None
 
 CORS(profile, origins=['*'], supports_credentials=True)
 CORS(user, origins=['*'], supports_credentials=True)
+CORS(manager_profile, origins=['*'], supports_credentials=True)
 
 app.register_blueprint(profile, url_prefix='/profile')
 app.register_blueprint(user, url_prefix='/users')
@@ -68,5 +71,5 @@ if 'ON_HEROKU' in os.environ:
 
 if __name__ == '__main__':
     models.initialize()
-    socketio.run(app)
+    # socketio.run(app)
     app.run(debug=DEBUG, port=PORT)
