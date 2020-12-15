@@ -19,7 +19,8 @@ PORT = 8000
 
 app = Flask(__name__)
 
-app.config.update(
+# TOGGLE THIS ON/OFF IF USING LOCALLY OR DEPLOYED!
+app.config.update( 
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_SAMESITE='None'
 )
@@ -67,9 +68,9 @@ def index():
 if 'ON_HEROKU' in os.environ:
     print('on heroku!')
     models.initialize()
-    # socketio.run(app)
+    socketio.run(app)
 
 if __name__ == '__main__':
     models.initialize()
-    # socketio.run(app)
+    socketio.run(app)
     app.run(debug=DEBUG, port=PORT)
