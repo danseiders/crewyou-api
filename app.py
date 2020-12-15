@@ -25,7 +25,7 @@ app = Flask(__name__)
 login_manager = LoginManager()
 app.secret_key =  os.getenv('SECRET_KEY')
 login_manager.init_app(app)
-socketio = SocketIO(app, cors_allowed_origins='*')
+# socketio = SocketIO(app, cors_allowed_origins='*')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -44,11 +44,11 @@ def after_request(response):
     g.db.close()
     return response
 
-@socketio.on('message')
-def handleMessage(msg):
-    print(msg)
-    send(msg, broadcast=True)
-    return None
+# @socketio.on('message')
+# def handleMessage(msg):
+#     print(msg)
+#     send(msg, broadcast=True)
+#     return None
 
 CORS(profile, origins=['*'], supports_credentials=True)
 CORS(user, origins=['*'], supports_credentials=True)
@@ -64,7 +64,7 @@ def index():
 if 'ON_HEROKU' in os.environ:
     print('on heroku!')
     models.initialize()
-    socketio.run(app)
+    # socketio.run(app)
 
 if __name__ == '__main__':
     models.initialize()
