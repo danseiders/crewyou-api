@@ -1,9 +1,9 @@
+import os
 from flask import Flask, jsonify, g
 from flask_cors import CORS
 from flask_login import LoginManager
 from flask_socketio import SocketIO, send
 from dotenv import load_dotenv
-import os
 
 import models
 from resources.users import user
@@ -60,6 +60,11 @@ app.register_blueprint(manager_profile, url_prefix='/managers')
 @app.route('/')
 def index():
     return 'Hello!'
+
+if 'ON_HEROKU' in os.environ:
+    print('on heroku!')
+    models.initialize()
+    socketio.run(app)
 
 if __name__ == '__main__':
     models.initialize()

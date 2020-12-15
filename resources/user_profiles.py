@@ -16,7 +16,7 @@ def get_user_profile():
         return jsonify(data={}, status={'code': 401, 'message': 'Error getting the resources'})
 
 @profile.route('/all', methods=['GET'])
-# @login_required
+@login_required
 def get_all_profiles():
     try:
         profiles = [model_to_dict(profile) for profile in models.Profiles.select()]
