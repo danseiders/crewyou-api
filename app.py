@@ -3,7 +3,7 @@ import os
 from flask import Flask, jsonify, g
 from flask_cors import CORS
 from flask_login import LoginManager
-# from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, send
 # from eventlet import wsgi
 # from eventlet import websocket
 from dotenv import load_dotenv
@@ -22,15 +22,16 @@ PORT = 8000
 app = Flask(__name__)
 
 # TOGGLE THIS ON/OFF IF USING LOCALLY OR DEPLOYED!
-app.config.update( 
-    SESSION_COOKIE_SECURE=True,
-    SESSION_COOKIE_SAMESITE='None'
-)
+# app.config.update( 
+#     SESSION_COOKIE_SECURE=True,
+#     SESSION_COOKIE_SAMESITE='None'
+# )
 
 login_manager = LoginManager()
 app.secret_key =  os.getenv('SECRET_KEY')
 login_manager.init_app(app)
-# socketio = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
+socketio = SocketIO(app, cors_allowed_origins='*')
+
 # participants = set()
 
 @login_manager.user_loader
@@ -50,11 +51,11 @@ def after_request(response):
     g.db.close()
     return response
 
-# @socketio.on('message')
-# def handleMessage(msg):
-#     print(msg)
-#     send(msg, broadcast=True)
-#     return None
+@socketio.on('message')
+def handleMessage(msg):
+    print(msg)
+    send(msg, broadcast=True)
+    return None
 
 # @websocket.WebSocketWSGI
 # def handle(ws):
@@ -98,7 +99,7 @@ if 'ON_HEROKU' in os.environ:
     models.initialize()
 
 if __name__ == '__main__':
-    # socketio.run(app)
+    socketio.run(app)
     # listener = eventlet.listen(('127.0.0.1', PORT))
     # wsgi.server(listener, dispatch)
     models.initialize()
