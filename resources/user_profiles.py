@@ -57,3 +57,5 @@ def delete_profile(id):
     print(query)
     query.execute()
     return jsonify(data='resource successfully deleted', status={'code': 200, 'message': 'resource deleted successfully'})
+
+# adsf
