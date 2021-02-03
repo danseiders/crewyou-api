@@ -1,9 +1,12 @@
+import os
+# import eventlet 
 from flask import Flask, jsonify, g
 from flask_cors import CORS
 from flask_login import LoginManager
-from flask_socketio import SocketIO, send
+# from flask_socketio import SocketIO, send
+# from eventlet import wsgi
+# from eventlet import websocket
 from dotenv import load_dotenv
-import os
 
 import models
 from resources.users import user
@@ -15,17 +18,20 @@ load_dotenv()
 DEBUG = True
 PORT = 8000
 
+
 app = Flask(__name__)
 
-# app.config.update(
-#     SESSION_COOKIE_SECURE=True,
-#     SESSION_COOKIE_SAMESITE='None'
-# )
+# TOGGLE THIS ON/OFF IF USING LOCALLY OR DEPLOYED!
+app.config.update( 
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SAMESITE='None'
+)
 
 login_manager = LoginManager()
 app.secret_key =  os.getenv('SECRET_KEY')
 login_manager.init_app(app)
-socketio = SocketIO(app, cors_allowed_origins='*')
+# socketio = SocketIO(app, cors_allowed_origins='*', async_mode='eventlet')
+# participants = set()
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -44,14 +50,38 @@ def after_request(response):
     g.db.close()
     return response
 
-@socketio.on('message')
-def handleMessage(msg):
-    print(msg)
-    send(msg, broadcast=True)
-    return None
+# @socketio.on('message')
+# def handleMessage(msg):
+#     print(msg)
+#     send(msg, broadcast=True)
+#     return None
+
+# @websocket.WebSocketWSGI
+# def handle(ws):
+#     participants.add(ws)
+#     try:
+#         while True:
+#             msg = ws.wait()
+#             if m is None:
+#                 break
+#             for p in participants:
+#                 p.send(msg)
+    
+#     finally:
+#         participants.remove(ws)
+
+# def dispatch(environ, start_repsonse):
+#     if environ['PATH_INFO'] == '/chat':
+#         return handle(environ, start_repsonse)
+#     else:
+#         start_repsonse('200 OK', [('content-type', 'text/html')])
+#         html_path = os.path.join(os.path.dirname(__file__), 'websocket_chat.html')
+#         return [open(html_path).read() % {'port': PORT}]
 
 CORS(profile, origins=['*'], supports_credentials=True)
 CORS(user, origins=['*'], supports_credentials=True)
+CORS(manager_profile, origins=['*'], supports_credentials=True)
+
 
 app.register_blueprint(profile, url_prefix='/profile')
 app.register_blueprint(user, url_prefix='/users')
@@ -61,7 +91,14 @@ app.register_blueprint(manager_profile, url_prefix='/managers')
 def index():
     return 'Hello!'
 
-if __name__ == '__main__':
+if 'ON_HEROKU' in os.environ:
+    print('on heroku!')
+    # socketio.run(app)
     models.initialize()
-    socketio.run(app)
+
+if __name__ == '__main__':
+    # socketio.run(app)
+    # listener = eventlet.listen(('127.0.0.1', PORT))
+    # wsgi.server(listener, dispatch)
+    models.initialize()
     app.run(debug=DEBUG, port=PORT)
