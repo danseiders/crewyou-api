@@ -87,7 +87,6 @@ app.register_blueprint(profile, url_prefix='/profile')
 app.register_blueprint(user, url_prefix='/users')
 app.register_blueprint(manager_profile, url_prefix='/managers')
 
-
 @app.route('/')
 def index():
     return 'Hello!'

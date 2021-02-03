@@ -45,7 +45,6 @@ class ManagerProfiles(Model):
     class Meta: 
         database = DATABASE
 
-
 def initialize():
     DATABASE.connect()
     DATABASE.create_tables([Users, Profiles, ManagerProfiles], safe=True)
