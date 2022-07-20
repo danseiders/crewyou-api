@@ -31,8 +31,8 @@ class Profiles(Model):
     touring= BooleanField()
     availability= CharField()
     # friends = ForeignKeyField(Users, backref='profiles')
-    
-    
+
+
     class Meta:
         database = DATABASE
 
@@ -42,7 +42,7 @@ class ManagerProfiles(Model):
     city = CharField()
     artists = CharField()
 
-    class Meta: 
+    class Meta:
         database = DATABASE
 
 def initialize():
