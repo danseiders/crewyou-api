@@ -1,4 +1,4 @@
-import models
+import resources.models as models
 from flask import Blueprint, jsonify, request
 from playhouse.shortcuts import model_to_dict
 from flask_login import current_user, login_required
@@ -7,7 +7,7 @@ manager_profile = Blueprint('manager_user_profiles', 'manager_user_profile')
 
 @manager_profile.route('/', methods=['GET'])
 @login_required
-def get_all_profiles():
+def get_profiles():
     try:
         profiles = [model_to_dict(profile) for profile in current_user.profiles]
         print(profiles)
