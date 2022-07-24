@@ -1,13 +1,11 @@
-import os
+import helpers.init as init
 from peewee import *
-import datetime
 from flask_login import UserMixin
 from playhouse.db_url import connect
 
-if 'ON_HEROKU' in os.environ:
-    DATABASE = connect(os.environ.get('DATABASE_URL'))
-else:
-    DATABASE = PostgresqlDatabase('crewyou')
+DATABASE = init.get_db()
+
+
 class Users(UserMixin, Model):
     username = CharField(unique=True)
     email = CharField(unique=True)
@@ -17,33 +15,36 @@ class Users(UserMixin, Model):
     class Meta:
         database = DATABASE
 
+
 class Profiles(Model):
     user_id = ForeignKeyField(Users, backref='profiles')
-    imgURL= CharField()
-    firstName= CharField()
-    lastName= CharField()
-    airport= CharField()
-    about= TextField()
-    position1= CharField()
-    position2= CharField()
-    position3= CharField()
-    position4= CharField()
-    touring= BooleanField()
-    availability= CharField()
+    imgURL = CharField()
+    firstName = CharField()
+    lastName = CharField()
+    airport = CharField()
+    about = TextField()
+    position1 = CharField()
+    position2 = CharField()
+    position3 = CharField()
+    position4 = CharField()
+    touring = BooleanField()
+    availability = CharField()
     # friends = ForeignKeyField(Users, backref='profiles')
-    
-    
+
     class Meta:
         database = DATABASE
 
+
 class ManagerProfiles(Model):
     user_id = ForeignKeyField(Users, backref='manager-profiles')
-    company = CharField()
+    business_name = CharField()
+    business_type = CharField()
     city = CharField()
     artists = CharField()
 
-    class Meta: 
+    class Meta:
         database = DATABASE
+
 
 def initialize():
     DATABASE.connect()

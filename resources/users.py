@@ -1,10 +1,11 @@
-import models
+import resources.models as models
 from flask import Blueprint, jsonify, request
 from flask_bcrypt import generate_password_hash, check_password_hash
-from flask_login import login_user, current_user, logout_user, login_required
+from flask_login import login_user, logout_user
 from playhouse.shortcuts import model_to_dict
 
 user = Blueprint('users', 'user')
+
 
 @user.route('/new', methods=['POST'])
 def create_user():
@@ -23,9 +24,10 @@ def create_user():
         del user_dict['password']
         return jsonify(data=user_dict, status={'code': 201, 'message': 'Success'})
 
+
 @user.route('/login', methods=['POST'])
 def login():
-    payload= request.get_json()
+    payload = request.get_json()
     payload['email'] = [payload['email'].lower()]
     print('payload', payload)
     try:
@@ -37,13 +39,14 @@ def login():
             print(user, 'this is user')
             return jsonify(data=user_dict, status={'code': 200, 'message': 'Success'})
         else:
-            print('Username or Password is in correct')
+            print('Username or Password is incorrect')
             return jsonify(data={}, status={'code': 401, 'message': 'Username or Password is incorrect'
-            })
+                                            })
     except models.DoesNotExist:
         print('User does not exist')
         return jsonify(data={}, status={'code': 401, 'message': 'Username or Password is incorrect'})
-        
+
+
 @user.route('/logout', methods=['GET'])
 def logout():
     logout_user()
