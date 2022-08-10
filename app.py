@@ -1,10 +1,12 @@
-import resources.models as models
 import helpers.init as init
-from flask import Flask, g
+from flask import Flask
 from flask_login import LoginManager
+from flask_dynamo import Dynamo
+import logging
 
 app = Flask(__name__)
 login_manager = LoginManager()
+dynamo = Dynamo(app)
 
 
 def set_init_app():
@@ -13,32 +15,25 @@ def set_init_app():
     init.set_cors()
     init.set_register_blueprint(app)
     init.set_session_cookies(app)
+    init.set_dynamo_tables(app)
+    init.set_logging_config(app)
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    try:
-        return models.Users.get(models.Users.id == user_id)
-    except models.DoesNotExist:
-        return None
+    user = init.get_users()
 
-
-@app.before_request
-def before_request():
-    g.db = models.DATABASE
-    g.db.connect()
-    print('connected to db')
-
-
-@app.after_request
-def after_request(response):
-    g.db.close()
-    return response
+    return user.get(user_id)
 
 
 if __name__ == '__main__':
     env_vars = init.get_env_vars()
     set_init_app()
 
-    models.initialize()
+    with app.app_context():
+        dynamo = Dynamo(app)
+        dynamo.create_all()
+        logging.info('Created Tables')
+
+    logging.info(app.url_map)
     app.run(debug=env_vars['debug'], port=env_vars['port'])

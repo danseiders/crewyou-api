@@ -1,10 +1,11 @@
-from playhouse.db_url import connect
-from peewee import PostgresqlDatabase
-from flask_cors import CORS
-from resources.users import user
-from resources.user_profiles import profile
-from resources.manager_user_profiles import manager_profile
+import logging
 import os
+import helpers.app_config as config_helper
+from flask_cors import CORS
+from logging.config import dictConfig
+from resources.users.user_model import UserModel
+from resources.users.users import user
+from resources.profiles.profiles import profile
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -28,27 +29,27 @@ def set_session_cookies(app):
             SESSION_COOKIE_SECURE=True,
             SESSION_COOKIE_SAMESITE='None'
         )
-        print('session cookies set')
+        logging.info('session cookies set')
 
 
 def set_cors():
     CORS(profile, origins=['*'], supports_credentials=True)
     CORS(user, origins=['*'], supports_credentials=True)
-    CORS(manager_profile, origins=['*'], supports_credentials=True)
 
 
 def set_register_blueprint(app):
     app.register_blueprint(profile, url_prefix='/profile')
-    app.register_blueprint(user, url_prefix='/users')
-    app.register_blueprint(manager_profile, url_prefix='/managers')
+    app.register_blueprint(user, url_prefix='/user')
 
 
-def get_db():
-    env_vars = get_env_vars()
+def set_dynamo_tables(app):
+    app.config['DYNAMO_TABLES'] = config_helper.get_db_config()
 
-    if env_vars['environment'] == 'prod':
-        response = connect(env_vars['db_url'])
-    elif env_vars['environment'] == 'dev':
-        response = PostgresqlDatabase('crewyou')
 
-    return response
+def set_logging_config(app):
+    dictConfig(config_helper.get_logger_config())
+    logging.info('LOGGING CONFIG SET')
+
+
+def get_users():
+    return user

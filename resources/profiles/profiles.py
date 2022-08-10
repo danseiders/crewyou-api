@@ -1,4 +1,4 @@
-import resources.models as models
+import resources.profiles.profile_class as profile
 from flask import Blueprint, jsonify, request
 from playhouse.shortcuts import model_to_dict
 from flask_login import current_user, login_required
@@ -7,18 +7,18 @@ profile = Blueprint('user_profiles', 'user_profile')
 
 
 @profile.route('/user', methods=['GET'])
-@login_required
+# @login_required
 def get_profile():
     try:
         profiles = [model_to_dict(profile)
                     for profile in current_user.profiles]
         return jsonify(data=profiles, status={'code': 200, 'message': 'Success'})
-    except models.DoesNotExist:
+    except profile.DoesNotExist:
         return jsonify(data={}, status={'code': 401, 'message': 'Error getting the resources'})
 
 
 @profile.route('/all', methods=['GET'])
-@login_required
+# @login_required
 def get_profiles():
     try:
         profiles = [model_to_dict(profile)
