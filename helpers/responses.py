@@ -5,7 +5,7 @@ from flask import jsonify
 def _get_response_message(request, status_code):
     responses = {
         '/user': {
-            'POST': {
+            'PUT': {
                 '200': 'User successfully created',
                 '409': 'User already exists'
             }

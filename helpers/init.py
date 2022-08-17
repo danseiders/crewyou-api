@@ -3,7 +3,6 @@ import os
 import helpers.app_config as config_helper
 from flask_cors import CORS
 from logging.config import dictConfig
-from resources.users.user_model import UserModel
 from resources.users.users import user
 from resources.profiles.profiles import profile
 from dotenv import load_dotenv
