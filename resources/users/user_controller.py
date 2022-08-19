@@ -1,12 +1,9 @@
-import app
 import logging
-import helpers.requests as request_helper
-import helpers.responses as response_helper
-from flask import Blueprint, jsonify, request
-from flask_login import login_user, logout_user
-from playhouse.shortcuts import model_to_dict
-from flask_dynamo import Dynamo
-import resources.users.User as UserClass
+import helpers.requests as RequestHelper
+import helpers.responses as ResponseHelper
+import resources.users.user_class as UserClass
+import resources.middleware.requests as RequestMiddleware
+from flask import Blueprint, request
 
 user = Blueprint('user', __name__)
 
@@ -15,73 +12,51 @@ def _get_parsed_payload(payload):
     return {
         'email': payload['email'].lower(),
         'username': payload['username'],
-        'password': request_helper.get_password_hash(payload['password']),
+        'password': RequestHelper.get_password_hash(payload['password']),
         'user_type': payload['user_type'],
         'is_active': False
     }
 
 
-def _get_get_response(user):
-    return 'GET!'
+def get(request):
+    return 'GET USER'
 
 
-def _get_put_response(user):
-    if 'Item' in user.get():
-        status_code = '409'
-    else:
-        user.put()
-        status_code = '200'
-
-    return status_code
+def put(request):
+    return 'PUT USER'
 
 
-def _get_patch_response(user):
-    return 'PATCH!'
+def post(request):
+    return 'POST USER'
 
 
-def _get_delete_response(user):
-    return 'DELETE!'
+def patch(request):
+    return 'PATCH USER'
 
 
-def _get_response(request):
-    user = UserClass.User(_get_parsed_payload(request.json))
-    logging.info(user)
-    response = {
-        'GET': _get_get_response(user),
-        'PUT': _get_put_response(user),
-        'PATCH': _get_patch_response(user),
-        'DELETE': _get_delete_response(user)
-    }
-
-    return response_helper.get_response(request, response[request.method])
+def delete(request):
+    return 'DELETE USER'
 
 
 @user.route('', methods=['PUT'])
 def create_user():
-    try:
-        response = _get_response(request)
-
-    except Exception as e:
-        print('FUCKING ERRRORRR')
-        response = str(e)
-
-    finally:
-        return response
+    return RequestMiddleware.get_response(request)
 
 
 @user.route('', methods=['GET'])
 def get_user():
-    return _get_response(request)
+    return RequestMiddleware.get_response(request)
 
 
 @user.route('', methods=['PATCH'])
 def update_user():
-    return _get_response(request)
+    return RequestMiddleware.get_response(request)
 
 
 @user.route('', methods=['DELETE'])
 def delete_user():
-    return _get_response(request)
+    return RequestMiddleware.get_response(request)
+
     # except Exception as e:
     #     app.logging.exception(e)
     # else:
