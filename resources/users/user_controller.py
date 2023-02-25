@@ -1,4 +1,6 @@
+import app
 import logging
+import boto3
 import helpers.requests as RequestHelper
 import helpers.responses as ResponseHelper
 import resources.users.user_class as UserClass
@@ -8,43 +10,58 @@ from flask import Blueprint, request
 user = Blueprint('user', __name__)
 
 
-def _get_parsed_payload(payload):
+def _get_parsed_username_and_pass(payload):
     return {
-        'email': payload['email'].lower(),
         'username': payload['username'],
         'password': RequestHelper.get_password_hash(payload['password']),
+    }
+
+
+def _get_parsed_new_user_payload(payload):
+    user = _get_parsed_username_and_pass(payload)
+
+    return {
+        'email': payload['email'].lower(),
+        'username': user['username'],
+        'password': user['password'],
         'user_type': payload['user_type'],
         'is_active': False
     }
 
 
-def get(request):
-    return 'GET USER'
+def get(payload):
+    payload = _get_parsed_username_and_pass(payload)
+    user = UserClass(payload)
+    user.get()
+
+    return '200'
 
 
-def put(request):
-    return 'PUT USER'
+def put(payload):
+    payload = _get_parsed_new_user_payload(payload)
+    user = UserClass.User(payload)
+    print(user.__dict__)
+
+    app.dynamo.tables['users'].put_item(Item=user.__dict__)
+
+    return '200'
 
 
-def post(request):
-    return 'POST USER'
-
-
-def patch(request):
+def patch(payload):
     return 'PATCH USER'
 
 
-def delete(request):
-    return 'DELETE USER'
-
-
-@user.route('', methods=['PUT'])
-def create_user():
-    return RequestMiddleware.get_response(request)
+def delete(payload):
+    return '200'
 
 
 @user.route('', methods=['GET'])
 def get_user():
+    return RequestMiddleware.get_response(request)
+
+
+@user.route('', methods=['PUT'])
+def create_user():
     return RequestMiddleware.get_response(request)
 
 
